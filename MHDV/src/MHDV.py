@@ -22,7 +22,7 @@ def generate_MHDV_load_profiles(
                                 kW_list_weight,
                                 kWh_per_mile_list_vehichle_class,
                                 year,
-                                GCAM_case,
+                                gcam_scenario,
                                 fleet_size,
                                 n_samples,
                                 seed,
@@ -126,7 +126,7 @@ def generate_MHDV_load_profiles(
     ##---Vehicle operating data obtained from NREL's FleetDNA data (https://www.nrel.gov/transportation/fleettest-fleet-dna.html)---  
     ##---Filter FleetDNA data. The mobility instances are filtered to best guess the return-to-base vehicle operations---
     
-    df_del_van               = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_delivery_vans.csv'))
+    df_del_van               = pd.read_csv(f'../../input/data_for_fleet_dna_delivery_vans.csv')
     df_del_van_filtered      = filter_data(df_del_van, start_times_delete = [0, 1, 2, 3, 4], end_times_delete = [23], 
                                            start_times_cut = [], frac_start_times = 0, 
                                            end_times_cut   = [21, 22], frac_end_times   = 0.7)  # frac: what % to delete
@@ -135,7 +135,7 @@ def generate_MHDV_load_profiles(
     df_del_van_mdv           = df_del_van_filtered[df_del_van_filtered['class_id'].isin([3, 4, 5, 6])]
     df_del_van_hdv           = df_del_van_filtered[df_del_van_filtered['class_id'].isin([7, 8])]
     
-    df_del_tru               = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_delivery_trucks.csv'))
+    df_del_tru               = pd.read_csv(f'../../input/data_for_fleet_dna_delivery_trucks.csv')
     df_del_tru_filtered      = filter_data(df_del_tru, start_times_delete = [], end_times_delete = [],
                                            start_times_cut = [], frac_start_times = 0, 
                                            end_times_cut   = [22,23], frac_end_times = 0.8)
@@ -144,7 +144,7 @@ def generate_MHDV_load_profiles(
     df_del_tru_mdv           = df_del_tru_filtered[df_del_tru_filtered['class_id'].isin([3, 4, 5, 6])]
     df_del_tru_hdv           = df_del_tru_filtered[df_del_tru_filtered['class_id'].isin([7, 8])]
 
-    df_scul_bus              = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_school_buses.csv'))
+    df_scul_bus              = pd.read_csv(f'../../input/data_for_fleet_dna_school_buses.csv')
     df_scul_bus_filtered     = filter_data(df_scul_bus, start_times_delete = [3, 4, 5], end_times_delete = [19, 20, 21, 22, 23],
                                           start_times_cut = [], frac_start_times = 0, 
                                           end_times_cut   = [], frac_end_times = 0) 
@@ -153,7 +153,7 @@ def generate_MHDV_load_profiles(
     df_scul_bus_mdv          = df_scul_bus_filtered[df_scul_bus_filtered['class_id'].isin([3, 4, 5, 6])]
     df_scul_bus_hdv          = df_scul_bus_filtered[df_scul_bus_filtered['class_id'].isin([7, 8])]
     
-    df_transit_bus           = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_transit_buses.csv'))
+    df_transit_bus           = pd.read_csv(f'../../input/data_for_fleet_dna_transit_buses.csv')
     df_transit_bus_filtered  = filter_data(df_transit_bus, start_times_delete = [0, 1, 2, 3, 4], end_times_delete = [],
                                           start_times_cut = [], frac_start_times = 0, 
                                           end_times_cut   = [22, 23], frac_end_times = 0.9)
@@ -162,7 +162,7 @@ def generate_MHDV_load_profiles(
     df_transit_bus_mdv       = df_transit_bus_filtered[df_transit_bus_filtered['class_id'].isin([3, 4, 5, 6])]
     df_transit_bus_hdv       = df_transit_bus_filtered[df_transit_bus_filtered['class_id'].isin([7, 8])]
    
-    df_bucket_tru            = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_bucket_trucks.csv'))
+    df_bucket_tru            = pd.read_csv(f'../../input/data_for_fleet_dna_bucket_trucks.csv')
     df_bucket_tru_filtered   = filter_data(df_bucket_tru, start_times_delete = [], end_times_delete = [],
                                           start_times_cut = [0, 1], frac_start_times = 0.9, 
                                           end_times_cut   = [22, 23], frac_end_times = 0.9)
@@ -171,7 +171,7 @@ def generate_MHDV_load_profiles(
     df_bucket_tru_mdv        = df_bucket_tru_filtered[df_bucket_tru_filtered['class_id'].isin([3, 4, 5, 6])]
     df_bucket_tru_hdv        = df_bucket_tru_filtered[df_bucket_tru_filtered['class_id'].isin([7, 8])]
    
-    df_ser_van               = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_service_vans.csv'))
+    df_ser_van               = pd.read_csv(f'../../input/data_for_fleet_dna_service_vans.csv')
     df_ser_van_filtered      = filter_data(df_ser_van, start_times_delete = [], end_times_delete = [],
                                           start_times_cut = [0], frac_start_times = 0.5, 
                                           end_times_cut   = [23], frac_end_times = 0.5)
@@ -180,7 +180,7 @@ def generate_MHDV_load_profiles(
     df_ser_van_mdv           = df_ser_van_filtered[df_ser_van_filtered['class_id'].isin([3, 4, 5, 6])]
     df_ser_van_hdv           = df_ser_van_filtered[df_ser_van_filtered['class_id'].isin([7, 8])] 
 
-    df_tractors              = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_class_8_tractors.csv'))
+    df_tractors              = pd.read_csv(f'../../input/data_for_fleet_dna_class_8_tractors.csv')
     df_tractors_filtered     = filter_data(df_tractors, start_times_delete = [0,1,2,3,4,5], end_times_delete = [19,20,21,22,23],
                                           start_times_cut = [], frac_start_times = 0, 
                                           end_times_cut   = [], frac_end_times = 0)
@@ -189,7 +189,7 @@ def generate_MHDV_load_profiles(
     df_tractors_mdv          = df_tractors_filtered[df_tractors_filtered['class_id'].isin([3, 4, 5, 6])]
     df_tractors_hdv          = df_tractors_filtered[df_tractors_filtered['class_id'].isin([7, 8])]
  
-    df_refuse_tru            = pd.read_csv(os.path.join('..', 'input','data_for_fleet_dna_refuse_trucks.csv'))
+    df_refuse_tru            = pd.read_csv(f'../../input/data_for_fleet_dna_refuse_trucks.csv')
     df_refuse_tru_filtered   = filter_data(df_refuse_tru, start_times_delete = [], end_times_delete = [],
                                           start_times_cut = [], frac_start_times = 0, 
                                           end_times_cut   = [], frac_end_times = 0) 
@@ -359,8 +359,8 @@ def generate_MHDV_load_profiles(
 
     ##---Adjust the normalized charging profiles to annual transportation energy in WECC (Exa Joules) projected by GCAM---
 
-   
-    energy_by_mode_and_fuel = pd.read_csv(os.path.join('..', 'input', 'transportation_energy_output_godeeep_' + GCAM_case +'.csv'))
+ 
+    energy_by_mode_and_fuel = pd.read_csv(f'../../input/transportation_energy_output_godeeep_{gcam_scenario}.csv')
 
     if veh_type == 'mdv':
 
@@ -401,7 +401,8 @@ def generate_MHDV_load_profiles(
 
     #---Percentage of PEV penetration across BAs within WECC---
 
-    df_ba_in_wecc_pev_percent = pd.read_csv(os.path.join('..', 'input','mdv_ba_percent_wecc.csv'))
+    df_ba_in_wecc_pev_percent = pd.read_csv(f'../../input/mdv_ba_percent_wecc.csv')
+
     ba_in_wecc_pev_percent    = df_ba_in_wecc_pev_percent.set_index('Balancing Authority').to_dict()['MDV Penetration']
 
     MW_ev_wecc_2_more_days  = np.concatenate([MW_ev_wecc[0:24], MW_ev_wecc, MW_ev_wecc[8760-24:8760]] )
@@ -428,12 +429,15 @@ def generate_MHDV_load_profiles(
 
         #---Map FIPS to BA time zones---
 
-        fips_timezone_code  = (pd.read_csv(os.path.join('..', 'input','county_timezones.dbx'),  sep='|',
+        fips_timezone_code  = (pd.read_csv(f'../../input/county_timezones.dbx',  sep='|',
             index_col=False,  names=['STATE', 'ZONE', 'CWA', 'NAME', 'STATE_ZONE', 'COUNTY',
                                      'FIPS', 'TIME_ZONE', 'FE_AREA', 'LAT', 'LON'])
            [['FIPS', 'TIME_ZONE']].rename(columns={'TIME_ZONE': 'timezone'}).groupby('FIPS').first()).reset_index()
 
-        ba_fips             = pd.read_csv(os.path.join('..', 'input', 'EV_at_scale_2020_Kintner-Meyer_etal.csv'))
+#         ba_fips             = pd.read_csv(os.path.join('..', 'input', 'EV_at_scale_2020_Kintner-Meyer_etal.csv'))
+        
+        ba_fips             = pd.read_csv(f'../../input/EV_at_scale_2020_Kintner-Meyer_etal.csv')
+        
         ba_fips_list        = list(ba_fips['FIPS'][ba_fips['Balancing Authority'].isin([ba])])
 
         #---Some BAs have multiple time zones. Assign the most frequent timezone to such BAs.---
@@ -444,7 +448,7 @@ def generate_MHDV_load_profiles(
 
         df_MW_ev_ba['time'] = pd.to_datetime(df_MW_ev_ba['time'], format='%Y-%m-%d %H:%M:%S') - pd.Timedelta(hours=daylight_offset)
 
-        df_MW_ev_ba.to_csv(os.path.join('..', 'output', f'{veh_type}_{GCAM_case}_{ba}_profile_{year}.csv'), index=False)
+        df_MW_ev_ba.to_csv(f'../output/{veh_type}_{gcam_scenario}_{ba}_profile_{year}.csv', index=False)
 
         #---BA-level plots in loop----
         if len(ba_in_wecc_pev_percent.items())%2 == 0:
@@ -463,14 +467,14 @@ def generate_MHDV_load_profiles(
         plt.grid(axis ='both', linestyle='--')
         cnt = cnt+1
 
-    plot_fp = os.path.join('..', 'output', f'{veh_type}_{GCAM_case}_ba_profile_{year}.png')
+    plot_fp = f'../output/{veh_type}_{gcam_scenario}_ba_profile_{year}.png'
     plt.savefig(plot_fp, bbox_inches='tight', dpi=300)
 
     df_prof_normalized      = pd.DataFrame({'time': time_series_orig, 'kW_normalized': normalized_profile})
     df_prof_wecc            = pd.DataFrame({'time': time_series_orig, 'MW_WECC': MW_ev_wecc})
 
 
-    df_prof_normalized.to_csv(os.path.join('..', 'output', f'{veh_type}_normalized_profile.csv'), index = False)
+    df_prof_normalized.to_csv(f'../output/{veh_type}_normalized_profile.csv', index = False)
 
 
     ##---Normalized charging plot----
@@ -486,7 +490,7 @@ def generate_MHDV_load_profiles(
     plt.title('{} Normalized Profile Based on FleetFNA Data {}'.format((veh_type).upper(), year), fontsize=16 )
     plt.xlim(0, 8760)
     plt.grid(axis='both', linestyle='--')
-    plot_fp = os.path.join('..', 'output', f'{veh_type}_normalized_profile.png')
+    plot_fp = f'../output/{veh_type}_normalized_profile.png'
     plt.savefig(plot_fp, bbox_inches ='tight', dpi=300)
 
 
