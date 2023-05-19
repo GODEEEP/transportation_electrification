@@ -3,7 +3,7 @@
 ## Overview:  
 The code generates charging profiles for medium-duty and heavy-duty vehicles across balancing authorities in the Western U.S. Interconnect. To run the code, please follow the below steps:
 
-a) Download the vehicle mobility data from NREL's Fleet DNA website (https://www.nrel.gov/transportation/fleettest-fleet-dna.html) in .csv format and save them inside 'input' folder in the main branch. 
+a) Download the vehicle mobility data from NREL's Fleet DNA website (https://www.nrel.gov/transportation/fleettest-fleet-dna.html) in .csv format and save them inside 'input' folder in the main branch. Note that you might get errors if Fleet DNA data changes. Please contact us if it happens.   
 
 b) Run 'MHDV.ipynb' inside 'notebook' folder. It will call 'MHDV.py' in 'src' folder.
 
