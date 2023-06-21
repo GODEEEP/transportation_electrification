@@ -8,6 +8,8 @@ Different approaches are used for each class of vehicles:
 
 Check out the Jupyter notebooks within the sub-folders for instructions and code for running the LDV and MHDV simulations, then use the notebook `combined_transportation_load.ipynb` to aggregate the results!
 
+The output dataset for years 2025 - 2050 in 5 year timesteps is available [here](https://doi.org/10.5281/zenodo.7888568).
+
 #### Workflow Diagram
 ![workflow](ev_workflow.png)
 
