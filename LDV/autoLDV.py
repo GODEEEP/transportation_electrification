@@ -13,8 +13,7 @@ pref_dist='Home60'
 home_power_dist='MostL2'
 work_power_dist='MostL2'
 
-#weather_scenarios=['rcp45cooler', 'rcp85hotter']
-weather_scenarios=['historical']
+weather_scenarios=['rcp45cooler', 'rcp85hotter']
 
 charging_strategies=[
     # home_access_dist, res_charging, work_charging
@@ -33,6 +32,7 @@ def run_LDV_year_scenario(
     input_directory_path,
     api_key_path,
     weather_year=None,
+    write_raw_loads=False,
 ):
 
     # get fleet size and daily miles breakdown by county
@@ -128,6 +128,18 @@ def run_LDV_year_scenario(
             # scale the loads
             loads['load_MWh'] = loads['load_MWh'] * loads['scale_factor']
 
+            if write_raw_loads:
+                loads = loads.merge(
+                    fleet_size[['FIPS', 'balancing_authority', 'fleet_size', 'daily_miles']],
+                    how='left',
+                    on=['FIPS', 'balancing_authority'],
+                )
+                loads.to_csv(
+                    f"./{gcam_scenario}_{weather_scenario}_{res_charging}_{home_access_dist}_{year}_raw_LDV_county_loads.csv",
+                    index=False
+                )
+                continue
+
             # aggregate the county loads to the balancing authority level
             ba_loads = LDV.aggregate_to_balancing_authority(loads)
 
@@ -148,10 +160,14 @@ if __name__ == "__main__":
     scenario_name = sys.argv[2]
     input_directory = sys.argv[3]
     api_key_path = sys.argv[4]
+    raw = False
     weather_year = None
 
     if len(sys.argv)==6:
-        weather_year = int(sys.argv[5])
+        if len(sys.argv[5]) == 4:
+            weather_year = int(sys.argv[5])
+        elif sys.argv[5] == "1":
+            raw = True
 
     run_LDV_year_scenario(
         year,
@@ -159,6 +175,7 @@ if __name__ == "__main__":
         input_directory,
         api_key_path,
         weather_year,
+        raw,
     )
 
 

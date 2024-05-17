@@ -1,5 +1,5 @@
 import click
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from glob import glob
 import holidays
 import json
@@ -165,6 +165,8 @@ def get_fleet_by_county(
 
     # read the files
     gcam_output = pd.read_csv(gcam_output_path)
+    # combine BEV Target and LA-BEV into BEV
+    gcam_output['technology'].replace({'BEV Target': 'BEV', 'LA-BEV': 'BEV'}, inplace=True)
     gcam_assumptions = pd.read_excel(gcam_transportation_assumptions_path)
     gcam_mapping = pd.read_csv(gcam_transportation_mapping_path, skiprows=7)
     ev_county_data = pd.read_csv(ev_by_county_path)
@@ -443,7 +445,7 @@ def get_annual_hourly_load_profile_for_county(
         ]
 
     # resample to daily mean
-    daily_county_meteorology = county_meteorology.groupby(county_meteorology.time.dt.date).mean().reset_index()
+    daily_county_meteorology = county_meteorology.groupby(county_meteorology.time.dt.date).mean()#.reset_index()
 
     # determine holiday status
     daily_county_meteorology['is_weekend_or_holiday'] = daily_county_meteorology.time.map(is_weekend_or_holiday)
@@ -464,7 +466,8 @@ def get_annual_hourly_load_profile_for_county(
                 start=daily_county_meteorology.iloc[0].time,
                 periods=len(load)+1,
                 freq='15min',
-                closed='right',
+                #closed='right',
+                inclusive='right',
             )
         )
         # resample to hourly and convert from kWh to MWh
@@ -474,10 +477,10 @@ def get_annual_hourly_load_profile_for_county(
         county_meteorology.loc[:, 'time'] = county_meteorology.time - pd.Timedelta(hours=daylight_offset)
         # select only the year of interest
         load = load[
-            (load.index > datetime(year, 1, 1, 0, 0, 0)) & (load.index <= datetime(year + 1, 1, 1, 0, 0, 0))
+            (load.index.to_pydatetime() > datetime(year, 1, 1, 0, 0, 0, tzinfo=timezone.utc)) & (load.index.to_pydatetime() <= datetime(year + 1, 1, 1, 0, 0, 0, tzinfo=timezone.utc))
         ]
         # join with temperature
-        load = load.tz_localize('utc').merge(
+        load = load.merge(
           county_meteorology.set_index('time')[['temperature_celsius']],
           how='left',
           left_index=True,
